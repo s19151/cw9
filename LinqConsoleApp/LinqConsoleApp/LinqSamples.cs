@@ -199,14 +199,18 @@ namespace LinqConsoleApp
             //1. Query syntax (SQL)
             var res = from emp in Emps
                       where emp.Job == "Backend programmer"
-                      select new
-                      {
-                          Nazwisko = emp.Ename,
-                          Zawod = emp.Job
-                      };
-
+                      select emp;
 
             //2. Lambda and Extension methods
+            var res2 = Emps.Where(e => e.Job == "Backend programmer");
+
+            foreach (var e in res)
+                Console.WriteLine($"{e.Ename} {e.Job} {e.Salary}");
+
+            Console.WriteLine();
+
+            foreach (var e in res2)
+                Console.WriteLine($"{e.Ename} {e.Job} {e.Salary}");
         }
 
         /// <summary>
@@ -214,8 +218,13 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad2()
         {
-            
+            var res = from emp in Emps
+                      where emp.Job == "Backend programmer" && emp.Salary > 1_000
+                      orderby emp.Ename descending
+                      select emp;
 
+            foreach (var e in res)
+                Console.WriteLine($"{e.Ename} {e.Job} {e.Salary}");
         }
 
         /// <summary>
@@ -223,7 +232,9 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad3()
         {
-          
+            var res = Emps.Max(e => e.Salary);
+
+            Console.WriteLine($"{res}");
         }
 
         /// <summary>
@@ -231,7 +242,12 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad4()
         {
+            var res = from emp in Emps
+                      where emp.Salary == Emps.Max(e => e.Salary)
+                      select emp;
 
+            foreach (var e in res)
+                Console.WriteLine($"{e.Ename} {e.Job} {e.Salary}");
         }
 
         /// <summary>
@@ -239,7 +255,15 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad5()
         {
+            var res = from emp in Emps
+                      select new
+                      {
+                          Nazwisko = emp.Ename,
+                          Praca = emp.Job
+                      };
 
+            foreach (var e in res)
+                Console.WriteLine($"{e.Nazwisko} {e.Praca}");
         }
 
         /// <summary>
@@ -249,7 +273,17 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad6()
         {
+            var res = from emp in Emps
+                      join dept in Depts on emp.Deptno equals dept.Deptno
+                      select new
+                      {
+                          emp.Ename,
+                          emp.Job,
+                          dept.Dname
+                      };
 
+            foreach (var e in res)
+                Console.WriteLine($"{e.Ename} {e.Job} {e.Dname}");
         }
 
         /// <summary>
