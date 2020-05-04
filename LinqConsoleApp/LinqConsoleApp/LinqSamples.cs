@@ -291,7 +291,15 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad7()
         {
+            var res = Emps.GroupBy(e => e.Job)
+                          .Select(group => new
+                          {
+                              Praca = group.Key,
+                              LiczbaPracownikow = group.Count()
+                          });
 
+            foreach (var e in res)
+                Console.WriteLine($"{e.Praca} {e.LiczbaPracownikow}");
         }
 
         /// <summary>
@@ -300,7 +308,11 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad8()
         {
+            var res = (from emp in Emps
+                       where emp.Job == "Backend programmer"
+                       select emp).Any();
 
+            Console.WriteLine(res);
         }
 
         /// <summary>
@@ -309,7 +321,11 @@ namespace LinqConsoleApp
         /// </summary>
         public void Przyklad9()
         {
+            var res = Emps.Where(e => e.Job == "Frontend programmer")
+                          .OrderByDescending(e => e.HireDate)
+                          .FirstOrDefault();
 
+            Console.WriteLine($"{res.Ename} {res.Job} {res.Salary}");
         }
 
         /// <summary>
@@ -317,22 +333,42 @@ namespace LinqConsoleApp
         /// UNION
         /// SELECT "Brak wartości", null, null;
         /// </summary>
-        public void Przyklad10Button_Click()
+        public void Przyklad10()
         {
+            Emp[] tmp = { new Emp { Ename = "Brak wartośći", Job = null, HireDate = null } };
+            var res = Emps.Union(tmp)
+                          .Select(e => new { e.Ename, e.Job, e.HireDate });
 
+            foreach (var e in res)
+                Console.WriteLine($"{e.Ename} {e.Job} {e.HireDate}");
         }
 
         //Znajdź pracownika z najwyższą pensją wykorzystując metodę Aggregate()
         public void Przyklad11()
         {
+            var res = Emps.Aggregate((e1, e2) => {
+                if(e1.Salary > e2.Salary)
+                    return e1;
 
+                return e2;
+            });
+
+            Console.WriteLine($"{res.Ename} {res.Job} {res.Salary}");
         }
 
         //Z pomocą języka LINQ i metody SelectMany wykonaj złączenie
         //typu CROSS JOIN
         public void Przyklad12()
         {
+            var res = Emps.SelectMany(e => Depts, (e, d) => new
+            {
+                e.Ename,
+                e.Deptno,
+                d.Dname
+            });
 
+            foreach (var e in res)
+                Console.WriteLine($"{e.Ename} {e.Deptno} {e.Dname}");
         }
     }
 }
